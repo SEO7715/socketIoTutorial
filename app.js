@@ -8,23 +8,34 @@ app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, '../socketTutorial/test', 'index.html'));
 });
 
-//Whenever someone connects this gets executed
-io.on('connection', function(socket){  
-    // Send a message when
-    // setTimeout(function(){
-    // This(server socket) will send an event called message(built in) to our client
-    //    socket.send('Sent a message 4seconds after connection!');
+var clients = 0;
 
-    // sending an object when emmiting an event
-    // socket.emit('testerEvent', {description: 'A custom event named testerEvent!'});
-    // }, 4000);
+// broadcast ver1
+// broadcast the number of connected clients to all the users.
+// io.on('connection', function(socket){  
+//     clients++;
+//     io.sockets.emit('broadcast', { description: clients + ' clients connected'});
+//     socket.on('disconnect', function () {
+//         clients--;
+//         io.sockets.emit('broadcast', { description: clients + ' clients connected'});
+//     });
+// });
 
-    //emit events from the client
-   socket.on('clientEvent', function(data) {
-      console.log(data);
-   });
+// broadcast ver2
+// send the new user a welcome message and update the other clients about him/her joining.
+// on connection of client send him a welcome message and broadcast connected client number to all others.
+io.on('connection', function(socket){
+    clients++;
+    socket.emit('newclientconnect', {description : 'Hey, welcome!'});
+    socket.broadcast.emit('newclientconnect', {description : clients + ' clients connected'})
+    socket.on('disconnect', function() {
+        clients--;
+        socket.broadcast.emit('newclientconnect', {description : clients + ' clients disconnected'})
+    });
 });
 
 http.listen(3000, function() {
-    console.log('listening on *:3000');
+    console.log('listening on localhost:3000');
 });
+
+

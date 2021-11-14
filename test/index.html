@@ -3,10 +3,11 @@
    <head><title>Hello world</title></head>
    <script src="/socket.io/socket.io.js"></script>
    <script>
-       var socket = io();
-    // socket.on('testerEvent', function(data){document.write(data.description)});
-    // emit events from the client
-       socket.emit('clientEvent', 'Sent an event from the client');
+      var socket = io();
+      socket.on('newclientconnect', function(data){
+         document.body.innerHTML = '';
+         document.write(data.description);
+      });
    </script>
    <body>Hello world</body>
 </html>

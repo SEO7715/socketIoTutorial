@@ -3,11 +3,23 @@
    <head><title>Hello world</title></head>
    <script src="/socket.io/socket.io.js"></script>
    <script>
-      var socket = io();
-      socket.on('newclientconnect', function(data){
-         document.body.innerHTML = '';
-         document.write(data.description);
-      });
+      //create custom namespace basic ver
+      // var socket = io('/my-namespace');
+      // socket.on('hi', function(data){
+      //    document.body.innerHTML = '';
+      //    document.write(data);
+      // });
+
+      function namespace(nsp) {
+         const namespace = io('/namespace' + nsp);
+         // news라는 이벤트를 받을 경우, console에 data.description 출력하기
+         namespace.on('news', (data) => {
+            console.log(data.description);
+         })
+      }
    </script>
-   <body>Hello world</body>
+   <body>
+      <button onClick="namespace (1)">namespace1</button>
+      <button onClick="namespace (2)">namespace2</button>
+   </body>
 </html>

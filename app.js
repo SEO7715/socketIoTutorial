@@ -8,30 +8,23 @@ app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, '../socketTutorial/test', 'index.html'));
 });
 
-var clients = 0;
-
-// broadcast ver1
-// broadcast the number of connected clients to all the users.
-// io.on('connection', function(socket){  
-//     clients++;
-//     io.sockets.emit('broadcast', { description: clients + ' clients connected'});
-//     socket.on('disconnect', function () {
-//         clients--;
-//         io.sockets.emit('broadcast', { description: clients + ' clients connected'});
-//     });
+//create custom namespace basic ver
+// var nsp = io.of('/my-namespace');
+// nsp.on('connection', function(socket) {
+//   console.log('someone connected');
+//   nsp.emit('hi', 'Hello everyone!');
 // });
 
-// broadcast ver2
-// send the new user a welcome message and update the other clients about him/her joining.
-// on connection of client send him a welcome message and broadcast connected client number to all others.
-io.on('connection', function(socket){
-    clients++;
-    socket.emit('newclientconnect', {description : 'Hey, welcome!'});
-    socket.broadcast.emit('newclientconnect', {description : clients + ' clients connected'})
-    socket.on('disconnect', function() {
-        clients--;
-        socket.broadcast.emit('newclientconnect', {description : clients + ' clients disconnected'})
-    });
+const namespace1 = io.of('/namespace1');
+// connection을 받으면, news 이벤트에 description 객체를 담아 보낸다
+namespace1.on('connection', (socket) => {
+  namespace1.emit('news', { description : "someone connected at namespace1"})
+});
+
+
+const namespace2 = io.of('/namespace2');
+namespace2.on('connection', (socket) => {
+  namespace2.emit('news', { description : "someone connected at namespace2"})
 });
 
 http.listen(3000, function() {
